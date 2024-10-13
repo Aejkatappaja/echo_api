@@ -7,7 +7,7 @@
     "build": "tsc && tsc-alias",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "prepare": "husky"
   },
   "keywords": [],
