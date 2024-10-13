@@ -23,7 +23,7 @@ const UserSchema = new Schema<IUserDocument>(
     password: { type: String, required: true },
     company: { type: String, required: true },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 UserSchema.statics.createUser = async function (args: IUserDocument) {
@@ -45,3 +45,11 @@ interface IUserModel extends Model<IUserDocument> {
 }
 
 export const User = model<IUserDocument, IUserModel>('User', UserSchema);
+
+export const CreateUserSchema = z.object({
+  body: z
+    .object({
+      ..._ZodUserSchema.shape,
+    })
+    .strict(),
+});
