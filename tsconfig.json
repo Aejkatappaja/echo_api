@@ -10,7 +10,8 @@
     "paths": {
       "@/*": ["src/*"],
       "@database": ["src/database/index.ts"],
-      "@core/*": ["src/core/*"]
+      "@core/*": ["src/core/*"],
+      "@user": ["src/user/index.ts"]
     },
     "strict": true,
     "noUnusedLocals": true,

@@ -1,6 +1,5 @@
+import { MONGODB_URI } from '@core/config';
 import mongoose from 'mongoose';
-
-import { MONGODB_URI } from '../core/config';
 
 export async function connectDB() {
   try {
