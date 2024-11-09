@@ -1,8 +1,8 @@
 import type { PassportStatic } from 'passport';
 import * as passportStrategy from 'passport-local';
 
-import { userService } from '@/api/user';
 import { User } from '@/database';
+import { utils } from '@/utils/password';
 
 import { createError } from '../errors';
 
@@ -16,7 +16,7 @@ export function configureLocalStrategy(passport: PassportStatic) {
           return done(null, false, { message: 'User incorrect' });
         }
 
-        const isMatch = await userService.passwordVerification(user.password, password);
+        const isMatch = await utils.isPasswordMatching(user.password, password);
 
         if (!isMatch) {
           return done(null, false, { message: 'Mot de passe incorrect' });
@@ -25,7 +25,7 @@ export function configureLocalStrategy(passport: PassportStatic) {
       } catch (error) {
         return done(error);
       }
-    }),
+    })
   );
 
   passport.serializeUser((user, done) => {
