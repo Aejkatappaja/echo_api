@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "ES2023",
     "module": "commonjs",
     "outDir": "./dist",
     "esModuleInterop": true,
@@ -11,7 +11,9 @@
       "@/*": ["src/*"],
       "@database": ["src/database/index.ts"],
       "@core/*": ["src/core/*"],
-      "@user": ["src/user/index.ts"]
+      "@user": ["src/user/index.ts"],
+      "@api": ["src/api/index.ts"],
+      "@api/*": ["src/api/*"]
     },
     "strict": true,
     "noUnusedLocals": true,

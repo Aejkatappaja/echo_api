@@ -1,7 +1,7 @@
 import { MONGODB_URI } from '@core/config';
 import mongoose from 'mongoose';
 
-export async function connectDB() {
+export async function connectDB(): Promise<void> {
   try {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB');
