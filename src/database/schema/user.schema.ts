@@ -2,7 +2,7 @@ import type { Document, Model, Types } from 'mongoose';
 import { model, Schema } from 'mongoose';
 import { z } from 'zod';
 
-const zodPasswordType = z
+export const zodPasswordType = z
   .string()
   .min(8, { message: 'Password should contain at least 8 characters' })
   .regex(/[a-z]/, {
@@ -20,6 +20,10 @@ export const zodUserSchema = z.object({
   email: z.string().email(),
   username: z.string().min(4),
   password: zodPasswordType,
+  loginAttempt: z.number().max(3).optional(),
+  locked: z.boolean().optional(),
+  resetPasswordToken: z.string().optional(),
+  resetPasswordExpires: z.date().optional(),
 });
 
 export type UserSchemaType = z.infer<typeof zodUserSchema>;
@@ -37,12 +41,16 @@ const UserSchema = new Schema<IUserDocument>(
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: false, minlength: 4 },
     password: { type: String, required: true, minlength: 8 },
+    loginAttempt: { type: Number, required: false, default: 0, max: 3 },
+    locked: { type: Boolean, default: false },
+    resetPasswordToken: { type: String, required: false },
+    resetPasswordExpires: { type: Date, required: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 UserSchema.statics.getUsers = async function () {
-  return await this.find();
+  return await this.find().select('-password -company');
 };
 
 UserSchema.statics.createUser = async function (createFields: IUserDocument) {
@@ -61,12 +69,30 @@ UserSchema.statics.deleteUser = async function (id: string) {
   return await this.findOneAndDelete({ _id: id });
 };
 
+UserSchema.statics.failedLogin = async function (id: string) {
+  const user = await this.findById(id);
+
+  user.loginAttempt += 1;
+
+  if (user.loginAttempt >= 3) user.locked = true;
+
+  await user.save();
+
+  return user;
+};
+
+UserSchema.statics.unlockAccount = async function (id: string) {
+  return await this.findByIdAndUpdate(id, { $set: { loginAttempt: 0, locked: false } }, { new: true });
+};
+
 interface IUserModel extends Model<IUserDocument> {
   getUsers(): Promise<IUserDocument[]>;
   createUser(args: UserSchemaType): Promise<IUserDocument>;
   getUserByEmail(id: string): Promise<IUserDocument>;
   updateUser(id: string, updateFields: Partial<UserSchemaType>): Promise<IUserDocument>;
   deleteUser(id: string): Promise<IUserDocument>;
+  failedLogin(id: string): Promise<IUserDocument>;
+  unlockAccount(id: string): Promise<IUserDocument>;
 }
 
 export const User = model<IUserDocument, IUserModel>('User', UserSchema);
@@ -85,6 +111,15 @@ export const UpdateUserSchema = z.object({
   params: z
     .object({
       id: z.string({ required_error: 'id is required' }),
+    })
+    .strict(),
+  body: zodUserSchema.partial(),
+});
+
+export const ResetPasswordSchema = z.object({
+  params: z
+    .object({
+      token: z.string({ required_error: 'token is required' }),
     })
     .strict(),
   body: zodUserSchema.partial(),
