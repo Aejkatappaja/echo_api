@@ -1,4 +1,3 @@
-import argon2 from 'argon2';
 import type { Document, Model, Types } from 'mongoose';
 import { model, Schema } from 'mongoose';
 import { z } from 'zod';
@@ -52,10 +51,6 @@ const UserSchema = new Schema<IUserDocument>(
   { timestamps: true }
 );
 
-UserSchema.statics.hashPassword = async function (password: string) {
-  return await argon2.hash(password);
-};
-
 UserSchema.statics.getUsers = async function () {
   return await this.find().select('-password -company');
 };
@@ -100,7 +95,6 @@ UserSchema.statics.unlockAccount = async function (id: string) {
 };
 
 export interface IUserModel extends Model<IUserDocument> {
-  hashPassword(password: string): Promise<string>;
   getUsers(): Promise<IUserDocument[]>;
   createUser(args: UserSchemaType): Promise<IUserDocument>;
   getUserByEmail(email: string): Promise<IUserDocument>;
