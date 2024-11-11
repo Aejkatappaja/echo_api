@@ -2,7 +2,7 @@ import type { PassportStatic } from 'passport';
 import * as passportStrategy from 'passport-local';
 
 import { User } from '@/database';
-import { utils } from '@/utils/password';
+import { passwordUtils } from '@/utils/password';
 
 import { createError } from '../errors';
 
@@ -18,7 +18,7 @@ export function configureLocalStrategy(passport: PassportStatic) {
 
         if (user.locked) return done(null, false, { message: 'Too many login attempts please reset your password' });
 
-        const isMatch = await utils.isPasswordMatching(user.password, password);
+        const isMatch = await passwordUtils.isMatching(user.password, password);
 
         if (!isMatch) {
           User.failedLogin(user._id.toString());
@@ -29,7 +29,7 @@ export function configureLocalStrategy(passport: PassportStatic) {
       } catch (error) {
         return done(error);
       }
-    }),
+    })
   );
 
   passport.serializeUser((user, done) => {

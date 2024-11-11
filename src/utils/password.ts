@@ -1,11 +1,11 @@
 import argon2 from 'argon2';
 
-class Utils {
-  public async hashingPassword(password: string): Promise<string> {
+class PasswordUtils {
+  public async hash(password: string): Promise<string> {
     return await argon2.hash(password);
   }
 
-  public async isPasswordMatching(hashedPassword: string, password: string): Promise<boolean> {
+  public async isMatching(hashedPassword: string, password: string): Promise<boolean> {
     try {
       const isMatch = await argon2.verify(hashedPassword, password);
       return !!isMatch;
@@ -16,4 +16,4 @@ class Utils {
   }
 }
 
-export const utils = new Utils();
+export const passwordUtils = new PasswordUtils();
