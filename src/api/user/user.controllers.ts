@@ -1,15 +1,23 @@
 import type { Request, Response } from 'express';
 
 import { createError } from '@/core/errors';
-import type { UserSchemaType } from '@/database/schema';
+import type { IUserModel, UserSchemaType } from '@/database/schema';
 import { User } from '@/database/schema';
 
 import { userService } from './user.services';
 
 class UserController {
+  private userModel: IUserModel;
+
+  constructor(userModel: IUserModel) {
+    this.userModel = userModel;
+    // this context is lost if not specified for `read` method
+    this.read = this.read.bind(this);
+  }
+
   public async read(_req: Request, res: Response) {
     try {
-      const users = await User.getUsers();
+      const users = await this.userModel.getUsers();
       console.log(users);
       res.status(200).send(users);
     } catch (e: unknown) {
@@ -21,7 +29,7 @@ class UserController {
   public async update(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      const updatedUser = await User.updateUser(id, req.body);
+      const updatedUser = await this.userModel.updateUser(id, req.body);
       console.log(updatedUser);
       res.status(200).send(updatedUser);
     } catch (e: unknown) {
@@ -33,7 +41,7 @@ class UserController {
   public async delete(req: Request<{ id: string }>, res: Response) {
     const { id } = req.params;
     try {
-      const deleteUser = await User.deleteUser(id);
+      const deleteUser = await this.userModel.deleteUser(id);
       console.log(deleteUser);
       res.status(200).send(deleteUser);
     } catch (e: unknown) {
@@ -53,6 +61,28 @@ class UserController {
       res.status(400).send(createError(err));
     }
   }
+
+  public async forgotPassword(req: Request, res: Response): Promise<any> {
+    const { email } = req.body;
+
+    try {
+      await userService.forgotPassword(email);
+      res.status(200).send('Password reset email sent');
+    } catch (err: unknown) {
+      res.status(400).send(createError(err));
+    }
+  }
+
+  public async resetPassword(req: Request, res: Response): Promise<any> {
+    const { token } = req.params;
+    const { password } = req.body;
+    try {
+      await userService.resetPassword({ token, password });
+      res.status(200).send('Password successfully reset');
+    } catch (err: unknown) {
+      res.status(400).send(createError(err));
+    }
+  }
 }
 
-export const userController = new UserController();
+export const userController = new UserController(User);

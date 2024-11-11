@@ -1,6 +1,9 @@
+import argon2 from 'argon2';
 import type { Document, Model, Types } from 'mongoose';
 import { model, Schema } from 'mongoose';
 import { z } from 'zod';
+
+import { MAX_LOGIN_ATTEMPT } from '@/core/constants';
 
 export const zodPasswordType = z
   .string()
@@ -46,8 +49,12 @@ const UserSchema = new Schema<IUserDocument>(
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
+
+UserSchema.statics.hashPassword = async function (password: string) {
+  return await argon2.hash(password);
+};
 
 UserSchema.statics.getUsers = async function () {
   return await this.find().select('-password -company');
@@ -69,12 +76,19 @@ UserSchema.statics.deleteUser = async function (id: string) {
   return await this.findOneAndDelete({ _id: id });
 };
 
+UserSchema.statics.getUserByToken = async (token: string) => {
+  return await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+};
+
 UserSchema.statics.failedLogin = async function (id: string) {
   const user = await this.findById(id);
 
   user.loginAttempt += 1;
 
-  if (user.loginAttempt >= 3) user.locked = true;
+  if (user.loginAttempt >= MAX_LOGIN_ATTEMPT) user.locked = true;
 
   await user.save();
 
@@ -85,10 +99,12 @@ UserSchema.statics.unlockAccount = async function (id: string) {
   return await this.findByIdAndUpdate(id, { $set: { loginAttempt: 0, locked: false } }, { new: true });
 };
 
-interface IUserModel extends Model<IUserDocument> {
+export interface IUserModel extends Model<IUserDocument> {
+  hashPassword(password: string): Promise<string>;
   getUsers(): Promise<IUserDocument[]>;
   createUser(args: UserSchemaType): Promise<IUserDocument>;
-  getUserByEmail(id: string): Promise<IUserDocument>;
+  getUserByEmail(email: string): Promise<IUserDocument>;
+  getUserByToken(token: string): Promise<IUserDocument>;
   updateUser(id: string, updateFields: Partial<UserSchemaType>): Promise<IUserDocument>;
   deleteUser(id: string): Promise<IUserDocument>;
   failedLogin(id: string): Promise<IUserDocument>;
