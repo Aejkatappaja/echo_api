@@ -15,7 +15,7 @@ class UserController {
     this.read = this.read.bind(this);
   }
 
-  public async read(_req: Request, res: Response) {
+  public async read(_req: Request, res: Response): Promise<void> {
     try {
       const users = await this.userModel.getUsers();
       console.log(users);
@@ -26,7 +26,7 @@ class UserController {
     }
   }
 
-  public async update(req: Request, res: Response) {
+  public async update(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
       const updatedUser = await this.userModel.updateUser(id, req.body);
@@ -38,7 +38,7 @@ class UserController {
     }
   }
 
-  public async delete(req: Request<{ id: string }>, res: Response) {
+  public async delete(req: Request<{ id: string }>, res: Response): Promise<void> {
     const { id } = req.params;
     try {
       const deleteUser = await this.userModel.deleteUser(id);
@@ -50,7 +50,7 @@ class UserController {
     }
   }
 
-  public async create(req: Request<object, object, UserSchemaType>, res: Response) {
+  public async create(req: Request<object, object, UserSchemaType>, res: Response): Promise<void> {
     try {
       const newUser = await userService.create(req.body);
       console.log(newUser);
@@ -62,18 +62,16 @@ class UserController {
     }
   }
 
-  public async forgotPassword(req: Request, res: Response): Promise<any> {
-    const { email } = req.body;
-
+  public async forgotPassword(req: Request, res: Response): Promise<void> {
     try {
-      await userService.forgotPassword(email);
+      await userService.forgotPassword(req.body.email);
       res.status(200).send('Password reset email sent');
     } catch (err: unknown) {
       res.status(400).send(createError(err));
     }
   }
 
-  public async resetPassword(req: Request, res: Response): Promise<any> {
+  public async resetPassword(req: Request, res: Response): Promise<void> {
     const { token } = req.params;
     const { password } = req.body;
     try {
