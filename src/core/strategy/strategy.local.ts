@@ -24,7 +24,8 @@ export function configureLocalStrategy(passport: PassportStatic) {
           User.failedLogin(user._id.toString());
           return done(null, false, { message: 'Mot de passe incorrect' });
         }
-
+        user.loginAttempt = 0;
+        user.save();
         return done(null, user._id.toString());
       } catch (error) {
         return done(error);
