@@ -26,6 +26,7 @@ export const zodUserSchema = z.object({
   locked: z.boolean().optional(),
   resetPasswordToken: z.string().optional(),
   resetPasswordExpires: z.date().optional(),
+  avatar: z.string().optional(),
 });
 
 export type UserSchemaType = z.infer<typeof zodUserSchema>;
@@ -47,6 +48,7 @@ const UserSchema = new Schema<IUserDocument>(
     locked: { type: Boolean, default: false },
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
+    avatar: { type: String, required: false },
   },
   { timestamps: true }
 );
