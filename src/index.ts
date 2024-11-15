@@ -1,6 +1,12 @@
 import { authRouter, userRouter } from '@api';
 import { PORT } from '@core/config';
-import { AUTH_API_PREFIX, USER_API_PREFIX } from '@core/constants';
+import {
+  AUTH_API_PREFIX,
+  BOARD_API_PREFIX,
+  COLUMN_API_PREFIX,
+  TEAM_API_PREFIX,
+  USER_API_PREFIX,
+} from '@core/constants';
 import { connectDB } from '@database';
 import cors from 'cors';
 import type { Express, Request, Response } from 'express';
@@ -10,6 +16,10 @@ import passport from 'passport';
 
 import { sessionConfig } from '@/core/config/session';
 import { configureLocalStrategy } from '@/core/strategy/strategy.local';
+
+import { boardRouter } from './api/board/board.routes';
+import { columnRouter } from './api/column/column.routes';
+import { teamRouter } from './api/team/team.routes';
 
 const app: Express = express();
 app.use(express.json());
@@ -33,6 +43,9 @@ connectDB().then(() => {
 
   app.use(AUTH_API_PREFIX, authRouter);
   app.use(USER_API_PREFIX, userRouter);
+  app.use(TEAM_API_PREFIX, teamRouter);
+  app.use(BOARD_API_PREFIX, boardRouter);
+  app.use(COLUMN_API_PREFIX, columnRouter);
 
   app.get('/', (_req: Request, res: Response) => {
     res.status(200).send('Welcome to Echo API!');

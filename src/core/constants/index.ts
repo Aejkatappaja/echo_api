@@ -2,6 +2,9 @@ export const BASE_API_PREFIX = '/api/v1';
 export const USER_API_PREFIX = `${BASE_API_PREFIX}/user`;
 export const AUTH_API_PREFIX = `${BASE_API_PREFIX}/auth`;
 export const RESET_PASSWORD_URL = `${USER_API_PREFIX}/reset-password`;
+export const TEAM_API_PREFIX = `${BASE_API_PREFIX}/team`;
+export const BOARD_API_PREFIX = `${BASE_API_PREFIX}/board`;
+export const COLUMN_API_PREFIX = `${BASE_API_PREFIX}/column`;
 
 export const MAX_LOGIN_ATTEMPT = 5;
 
