@@ -13,7 +13,16 @@ import { configureLocalStrategy } from '@/core/strategy/strategy.local';
 
 const app: Express = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    // need to specify this when sending cookies
+    // otherwise it doesn't work
+    origin: (_origin, callback) => {
+      callback(null, true);
+    },
+    credentials: true,
+  })
+);
 app.use(morgan('common'));
 
 connectDB().then(() => {
