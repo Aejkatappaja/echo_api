@@ -1,12 +1,4 @@
-import { authRouter, userRouter } from '@api';
-import { PORT } from '@core/config';
-import {
-  AUTH_API_PREFIX,
-  BOARD_API_PREFIX,
-  COLUMN_API_PREFIX,
-  TEAM_API_PREFIX,
-  USER_API_PREFIX,
-} from '@core/constants';
+import { authRouter, boardRouter, columnRouter, teamRouter, userRouter } from '@api';
 import { connectDB } from '@database';
 import cors from 'cors';
 import type { Express, Request, Response } from 'express';
@@ -14,12 +6,12 @@ import express from 'express';
 import morgan from 'morgan';
 import passport from 'passport';
 
-import { sessionConfig } from '@/core/config/session';
-import { configureLocalStrategy } from '@/core/strategy/strategy.local';
+import { sessionConfig } from '@/session';
+import { configureLocalStrategy } from '@/strategy/strategy.local';
 
-import { boardRouter } from './api/board/board.routes';
-import { columnRouter } from './api/column/column.routes';
-import { teamRouter } from './api/team/team.routes';
+import { commentRouter } from './api/comment/comment.routes';
+import { PORT } from './config';
+import { API_ENDPOINTS } from './constants';
 
 const app: Express = express();
 app.use(express.json());
@@ -41,11 +33,12 @@ connectDB().then(() => {
   app.use(passport.session());
   configureLocalStrategy(passport);
 
-  app.use(AUTH_API_PREFIX, authRouter);
-  app.use(USER_API_PREFIX, userRouter);
-  app.use(TEAM_API_PREFIX, teamRouter);
-  app.use(BOARD_API_PREFIX, boardRouter);
-  app.use(COLUMN_API_PREFIX, columnRouter);
+  app.use(API_ENDPOINTS.AUTH, authRouter);
+  app.use(API_ENDPOINTS.USER, userRouter);
+  app.use(API_ENDPOINTS.TEAM, teamRouter);
+  app.use(API_ENDPOINTS.BOARD, boardRouter);
+  app.use(API_ENDPOINTS.COLUMN, columnRouter);
+  app.use(API_ENDPOINTS.COMMENT, commentRouter);
 
   app.get('/', (_req: Request, res: Response) => {
     res.status(200).send('Welcome to Echo API!');

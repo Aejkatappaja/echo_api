@@ -2,9 +2,8 @@ import type { PassportStatic } from 'passport';
 import * as passportStrategy from 'passport-local';
 
 import { User } from '@/database';
+import { createError } from '@/middleware';
 import { passwordUtils } from '@/utils/password';
-
-import { createError } from '../errors';
 
 export function configureLocalStrategy(passport: PassportStatic) {
   passport.use(
@@ -22,7 +21,7 @@ export function configureLocalStrategy(passport: PassportStatic) {
 
         if (!isMatch) {
           User.failedLogin(user._id.toString());
-          return done(null, false, { message: 'Mot de passe incorrect' });
+          return done(null, false, { message: 'Incorrect password' });
         }
         user.loginAttempt = 0;
         user.save();
@@ -41,7 +40,7 @@ export function configureLocalStrategy(passport: PassportStatic) {
   passport.deserializeUser((user, done) => {
     try {
       if (!user) {
-        throw new Error('user not found');
+        throw new Error('User not found');
       }
       done(null, user);
     } catch (e: unknown) {

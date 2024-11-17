@@ -5,6 +5,16 @@ export const RESET_PASSWORD_URL = `${USER_API_PREFIX}/reset-password`;
 export const TEAM_API_PREFIX = `${BASE_API_PREFIX}/team`;
 export const BOARD_API_PREFIX = `${BASE_API_PREFIX}/board`;
 export const COLUMN_API_PREFIX = `${BASE_API_PREFIX}/column`;
+export const COMMENT_API_PREFIX = `${BASE_API_PREFIX}/comment`;
+
+export const API_ENDPOINTS = {
+  USER: USER_API_PREFIX,
+  AUTH: AUTH_API_PREFIX,
+  TEAM: TEAM_API_PREFIX,
+  BOARD: BOARD_API_PREFIX,
+  COLUMN: COLUMN_API_PREFIX,
+  COMMENT: COMMENT_API_PREFIX,
+};
 
 export const MAX_LOGIN_ATTEMPT = 5;
 

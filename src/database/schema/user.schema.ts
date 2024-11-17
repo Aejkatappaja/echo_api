@@ -2,7 +2,7 @@ import type { Document, Model, Types } from 'mongoose';
 import { model, Schema } from 'mongoose';
 import { z } from 'zod';
 
-import { MAX_LOGIN_ATTEMPT } from '@/core/constants';
+import { MAX_LOGIN_ATTEMPT } from '@/constants';
 
 export const zodPasswordType = z
   .string()

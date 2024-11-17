@@ -1,4 +1,4 @@
-import { RESET_PASSWORD_URL, TOKEN_EXPIRATION } from '@/core/constants';
+import { RESET_PASSWORD_URL, TOKEN_EXPIRATION } from '@/constants';
 import type { IUserDocument, IUserModel, UserSchemaType } from '@/database';
 import { User } from '@/database';
 import { sendMail } from '@/utils/mail';
@@ -37,7 +37,7 @@ class UserService {
     await sendMail(
       email,
       'Password Reset',
-      `You requested a password reset. Click the link to reset your password: ${resetURL}`,
+      `You requested a password reset. Click the link to reset your password: ${resetURL}`
     );
   }
 

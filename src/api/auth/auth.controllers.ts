@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import { createError } from '@/core/errors';
+import { createError } from '@/middleware';
 
 import { authService } from './auth.services';
 

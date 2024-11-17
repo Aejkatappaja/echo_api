@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 
-import { createError } from '@/core/errors';
 import type { IUserModel, UserSchemaType } from '@/database/schema';
 import { User } from '@/database/schema';
+import { createError } from '@/middleware';
 
 import { userService } from './user.services';
 

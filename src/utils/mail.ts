@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-import { NODEMAILER_EMAIL, NODEMAILER_EMAIL_PASSWORD } from '@/core/config';
+import { NODEMAILER_EMAIL, NODEMAILER_EMAIL_PASSWORD } from '@/config';
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',

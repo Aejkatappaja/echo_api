@@ -1,7 +1,8 @@
-import { AUTH_SECRET, MONGODB_URI } from '@core/config';
 import type { UserSchemaType } from '@database';
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
+
+import { AUTH_SECRET, MONGODB_URI } from './config';
 
 export const sessionConfig = session({
   secret: AUTH_SECRET,
