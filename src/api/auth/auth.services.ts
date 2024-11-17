@@ -25,7 +25,7 @@ class AuthServices {
           console.log(req.session);
           return res.send('connected');
         });
-      },
+      }
     )(req, res, next);
   }
 
@@ -33,11 +33,11 @@ class AuthServices {
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {
         if (err) {
-          res.send('Erreur lors de la déconnexion.');
+          res.send('An error occured on disconnection process');
           return reject(err);
         }
         res.clearCookie('connect.sid', { path: '/' });
-        res.send('Déconnexion réussie.');
+        res.send('Successfully disconnected!');
         resolve();
       });
     });
