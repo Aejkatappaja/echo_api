@@ -27,6 +27,7 @@ export const zodUserSchema = z.object({
   resetPasswordToken: z.string().optional(),
   resetPasswordExpires: z.date().optional(),
   avatar: z.string().optional(),
+  teams: z.instanceof(Schema.Types.ObjectId).optional(),
 });
 
 export type UserSchemaType = z.infer<typeof zodUserSchema>;
@@ -41,7 +42,7 @@ export interface IUserDocument
 
 const UserSchema = new Schema<IUserDocument>(
   {
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true, index: true },
     username: { type: String, required: true, unique: false, minlength: 4 },
     password: { type: String, required: true, minlength: 8 },
     loginAttempt: { type: Number, required: false, default: 0, max: 3 },
@@ -49,6 +50,7 @@ const UserSchema = new Schema<IUserDocument>(
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
     avatar: { type: String, required: false },
+    teams: [{ type: Schema.Types.ObjectId, ref: 'Team', required: false }],
   },
   { timestamps: true }
 );
