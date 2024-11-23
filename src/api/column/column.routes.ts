@@ -13,12 +13,12 @@ columnRouter
     if (!existingBoard) res.send('team doesnt exists');
     const creationField = {
       title: req.body.title,
-      board: req.body.board,
+      board_id: req.body.board,
     };
     await Column.createColumn(creationField);
     res.send(creationField);
   })
   .get('/', isAuthenticated, async (_req: Request, res: Response) => {
-    const columns = await Column.find().populate('board', 'id');
+    const columns = await Column.find().populate('board_id', 'id').populate('comments');
     res.send(columns);
   });
